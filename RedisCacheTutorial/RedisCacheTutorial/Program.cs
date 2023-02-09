@@ -11,13 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 
-#region DistributedCache Konfigürasyonu
-//builder.Services.AddStackExchangeRedisCache(options =>
-//{
-//    options.Configuration = "localhost:6379";
-//});
+
 builder.Services.AddSingleton<IRedisCacheService, RedisCacheManager>();
-#endregion
+
 
 
 builder.Services.AddSwaggerGen(options =>
