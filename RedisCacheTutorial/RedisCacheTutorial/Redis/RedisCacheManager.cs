@@ -229,7 +229,26 @@ namespace RedisCacheTutorial.Redis
 
         public void RDBFileCreate()
         {
-            //_server.Save();
+            /* 
+               1- BackgroundSave komutu, verilerin bellekteki güncel durumunu disk üzerinde bir yedek dosyası olarak kaydetmek için kullanılır.
+               
+               2- ForegroundSave komutu, Redis sunucusunun tüm verilerin disk üzerinde kaydedilmesi için anında bir kaydetme işlemi başlatır. 
+               Bu işlem sunucunun performansını etkileyebilir ve uzun sürebilir
+             
+             */
+            _server.Save(SaveType.BackgroundSave);
+        }
+
+        public void AOFFileCreate()
+        {
+            /* 
+               AOF (Append-Only File) dosyası, Redis verilerinin tutulduğu ve sürekli olarak güncellendiği bir dosyadır.
+               AOF dosyası, Redis veritabanındaki tüm yapılan yazma işlemlerini sıralı olarak kaydeder. 
+               Bu dosya, Redis veritabanındaki verilerin bir kaza, kapatma gibi nedenlerle kaybolan verilerin geri yüklenmesi için kullanılır.
+               AOF dosyası, Redis'in sağladığı kalıcı veritabanı desteği sayesinde verilerin sürekli olarak kaydedilmesini ve güncellenmesini sağlar.
+            */
+
+            _server.Save(SaveType.BackgroundRewriteAppendOnlyFile);
         }
 
     }
