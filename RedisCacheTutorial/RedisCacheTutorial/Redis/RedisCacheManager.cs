@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
 using System.Data.Common;
@@ -86,22 +87,18 @@ namespace RedisCacheTutorial.Redis
 
             GetDatabase().StringSet(key, value, duration, When.Always, CommandFlags.None);
         }
-
         public string GetValue(string key)
         {
             return GetDatabase().StringGet(key);
         }
-
         public void RemoveKey(string key)
         {
             GetDatabase().KeyDelete(key);
         }
-
         public bool KeyExists(string key)
         {
             return GetDatabase().KeyExists(key);
         }
-
 
 
         public string GetExpireTime(string key)
@@ -118,7 +115,6 @@ namespace RedisCacheTutorial.Redis
             }
 
         }
-
         public bool SetExpireTime(string key, int exMinute, bool isAdding)
         {
             // Key exists, refresh the expiration time
@@ -140,14 +136,10 @@ namespace RedisCacheTutorial.Redis
             }
 
         }
-
-
-
         public List<string> GetAllKeys()
         {
             return _server.Keys().Select(key => key.ToString()).ToList();
         }
-
         public bool RemoveAllKeys()
         {
             //admin izni ile çalışan bir metoddur
@@ -156,15 +148,52 @@ namespace RedisCacheTutorial.Redis
         }
 
 
+        public void SetObject(string key, object value)
+        {
+            GetDatabase().StringSet(key, JsonConvert.SerializeObject(value));
+        }
+        public T GetObject<T>(string key)
+        {
+            var value = GetDatabase().StringGet(key);
+            return value.HasValue ? JsonConvert.DeserializeObject<T>(value) : default(T);
+        }
 
 
-        //PUB-SUB METHODS
+
+        //OTHER OPERATİONS
+
+        public void HashSet(string key, Dictionary<string, string> values)
+        {
+            GetDatabase().HashSet(key, values.Select(x => new HashEntry(x.Key, x.Value)).ToArray());
+        }
+        public Dictionary<string, string> HashGetAll(string key)
+        {
+            return GetDatabase().HashGetAll(key).ToDictionary(x => x.Name.ToString(), x => x.Value.ToString());
+        }
+        public  void ListRightPush(string key, string value)
+        {
+            GetDatabase().ListRightPush(key, value);
+        }
+        public string ListLeftPop(string key)
+        {
+            return GetDatabase().ListLeftPop(key);
+        }
+        public void SortedSetAdd(string key, string value, double score)
+        {
+            GetDatabase().SortedSetAdd(key, value, score);
+        }
+        public List<string> SortedSetRangeByScore(string key, double start = double.NegativeInfinity, double stop = double.PositiveInfinity)
+        {
+            return GetDatabase().SortedSetRangeByScore(key, start, stop).Select(x => x.ToString()).ToList();
+        }
+
+
+        //PUB-SUB OPERATİONS
 
         public void PublishMessage(string channel, string message)
         {
             _subscriber.Publish(channel, message);
         }
-
         public void Subscribe(string channelName, Action<string, string> handleMessage)
         {
             var subscriber = _connection.GetSubscriber();
@@ -173,7 +202,6 @@ namespace RedisCacheTutorial.Redis
                 handleMessage(channel, message);
             });
         }
-
         public void Unsubscribe(string channel)
         {
             _subscriber.Unsubscribe(channel);
