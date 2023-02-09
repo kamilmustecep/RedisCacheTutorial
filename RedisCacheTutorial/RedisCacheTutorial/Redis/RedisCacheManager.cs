@@ -225,7 +225,7 @@ namespace RedisCacheTutorial.Redis
 
 
 
-        //YEDEKLEME
+        //BACKUP OPERATİONS
 
         public void RDBFileCreate()
         {
