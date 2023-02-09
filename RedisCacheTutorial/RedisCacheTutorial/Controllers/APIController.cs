@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace RedisCacheTutorial.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
     public class APIController : ControllerBase
     {
@@ -18,21 +18,21 @@ namespace RedisCacheTutorial.Controllers
         }
 
 
-        [HttpGet("Getir")]
+        [HttpGet("getValue")]
         public IActionResult Get(string key)
         {
             var value = _redisService.GetValue(key);
             return Content(value);
         }
 
-        [HttpPost("Ekle")]
+        [HttpPost("setKey")]
         public IActionResult Set(string key,string value,int exMinute)
         {
             _redisService.SetValue(key, value, exMinute);
             return Content("1");
         }
 
-        [HttpDelete("Sil")]
+        [HttpDelete("deleteKey")]
         public IActionResult Delete(string key)
         {
             _redisService.RemoveKey(key);
@@ -40,14 +40,14 @@ namespace RedisCacheTutorial.Controllers
         }
 
 
-        [HttpGet("ExpireTimeGet")]
+        [HttpGet("getExTime")]
         public IActionResult GetExpireTime(string key)
         {
             var value = _redisService.GetExpireTime(key);
             return Content(value);
         }
 
-        [HttpGet("ExpireTimeSet")]
+        [HttpPost("setExTime")]
         public IActionResult SetExpireTime(string key,int minute,bool isAdding)
         {
             var value = _redisService.SetExpireTime(key, minute,isAdding);
@@ -55,14 +55,14 @@ namespace RedisCacheTutorial.Controllers
         }
 
 
-        [HttpGet("GetAllKey")]
+        [HttpGet("getAllKey")]
         public IActionResult GetAllKey()
         {
             var result = JsonConvert.SerializeObject(_redisService.GetAllKeys());  
             return Content(result);
         }
 
-        [HttpGet("DeleteAllKey")]
+        [HttpGet("deleteAllKey")]
         public IActionResult DeleteAllKey()
         {
             var result = _redisService.RemoveAllKeys();
@@ -70,7 +70,19 @@ namespace RedisCacheTutorial.Controllers
         }
 
 
+        [HttpPost("setSortedWithScore")]
+        public IActionResult SetSortedWithScore(string key,string value,double score)
+        {
+            _redisService.SortedSetAdd(key, value, score);
+            return Ok();
+        }
 
+
+        [HttpGet("getSortedWithScore")]
+        public IActionResult SortedSetRangeByScore(string key)
+        {
+            return Content(_redisService.SortedSetRangeByScore(key));
+        }
 
 
 

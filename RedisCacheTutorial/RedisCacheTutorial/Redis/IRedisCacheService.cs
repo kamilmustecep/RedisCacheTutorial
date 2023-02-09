@@ -51,7 +51,7 @@ namespace RedisCacheTutorial.Redis
         public void SortedSetAdd(string key, string value, double score);
 
 
-        public List<string> SortedSetRangeByScore(string key, double start = double.NegativeInfinity, double stop = double.PositiveInfinity);
+        public string SortedSetRangeByScore(string key, double start = double.NegativeInfinity, double stop = double.PositiveInfinity);
        
 
     }

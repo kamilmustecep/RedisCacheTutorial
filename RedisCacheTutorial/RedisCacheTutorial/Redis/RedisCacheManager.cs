@@ -31,17 +31,24 @@ namespace RedisCacheTutorial.Redis
                 if (_connection != null && _connection.IsConnected) return;
 
 
-                //flushdb için allow admin true yapılır.
+                //Set allow admin true for flushdb.
+                //DefaultDatabase is set to 0,1,2...16 for different database.
                 var options = ConfigurationOptions.Parse("localhost:6379");
                 options.ConnectRetry = 5;
                 options.AllowAdmin = true;
+                options.DefaultDatabase = 0;
 
                 _connection = ConnectionMultiplexer.Connect(options);
+
+                //Create a database backup every hour (3600 seconds)
+                _connection.GetServer("localhost:6379").ConfigSet("save", "3600 1");
             }
         }
 
         public IDatabase GetDatabase()
         {
+            var a = _connection.GetDatabase();
+
             return _connection.GetDatabase();
         }
 
@@ -131,7 +138,7 @@ namespace RedisCacheTutorial.Redis
             }
             else
             {
-                // Key does not exist, add the key-value pair with an expiration time
+                // Key does not exist
                 return false;
             }
 
@@ -170,7 +177,12 @@ namespace RedisCacheTutorial.Redis
         {
             return GetDatabase().HashGetAll(key).ToDictionary(x => x.Name.ToString(), x => x.Value.ToString());
         }
-        public  void ListRightPush(string key, string value)
+
+
+        /* Bu fonksiyonlar, verilerin listeye sağ tarafından eklenmesini (ListRightPush)
+        ve sol tarafından çıkarılmasını (ListLeftPop) destekler. */
+
+        public void ListRightPush(string key, string value)
         {
             GetDatabase().ListRightPush(key, value);
         }
@@ -178,13 +190,17 @@ namespace RedisCacheTutorial.Redis
         {
             return GetDatabase().ListLeftPop(key);
         }
+
+
+        /* SortedSetAdd fonksiyonu, Redis Sorted Set veri yapısına bir anahtar-değer çifti ve puan ekler. 
+         SortedSetRangeByScore fonksiyonu, verilerin puanına göre belirli bir aralıkta seçilmesini sağlar.*/
         public void SortedSetAdd(string key, string value, double score)
         {
             GetDatabase().SortedSetAdd(key, value, score);
         }
-        public List<string> SortedSetRangeByScore(string key, double start = double.NegativeInfinity, double stop = double.PositiveInfinity)
+        public string SortedSetRangeByScore(string key, double start = double.NegativeInfinity, double stop = double.PositiveInfinity)
         {
-            return GetDatabase().SortedSetRangeByScore(key, start, stop).Select(x => x.ToString()).ToList();
+            return JsonConvert.SerializeObject(GetDatabase().SortedSetRangeByScore(key, start, stop).Select(x => x.ToString()).ToList());
         }
 
 
@@ -207,6 +223,14 @@ namespace RedisCacheTutorial.Redis
             _subscriber.Unsubscribe(channel);
         }
 
+
+
+        //YEDEKLEME
+
+        public void RDBFileCreate()
+        {
+            //_server.Save();
+        }
 
     }
 }
