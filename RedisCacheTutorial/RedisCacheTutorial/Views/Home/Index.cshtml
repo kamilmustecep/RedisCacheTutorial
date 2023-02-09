@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+
+
+<div id="messages">
+
+
+</div>
+
+
+<script>
+$.ajax({
+    type: "GET",
+    url: "/api/API/subscribe?channelName=index",
+    success: function (message) {
+        ReceiveMessage(message);
+    }
+});
+
+function ReceiveMessage(message) {
+
+    $("#messages").append('<h1>'+message+'</h1></br>');
+
+
+        setTimeout(() => {
+            
+            $.ajax({
+                type: "GET",
+                url: "/api/API/subscribe?channelName=index",
+                success: function (data) {
+                    ReceiveMessage(data);
+                },
+                error: function () {
+
+                }
+            });
+
+        }, 10)
+
+
+            
+        
+        
+
+
+        
+}
+</script>
