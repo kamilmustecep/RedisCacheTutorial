@@ -14,11 +14,15 @@ namespace RedisCacheTutorial.Redis
         private static ISubscriber _subscriber;
         private static readonly object _lock = new object();
 
+        //windows redis adress : localhost:6379
+        //docker redis adress : localhost:3737
+        private static string adress = "localhost:6379";
+
 
         public RedisCacheManager()
         {
             Connect();
-            _server = _connection.GetServer("localhost:6379");
+            _server = _connection.GetServer(adress);
             _subscriber = _connection.GetSubscriber();
         }
 
@@ -33,7 +37,7 @@ namespace RedisCacheTutorial.Redis
 
                 //Set allow admin true for flushdb.
                 //DefaultDatabase is set to 0,1,2...16 for different database.
-                var options = ConfigurationOptions.Parse("localhost:6379");
+                var options = ConfigurationOptions.Parse(adress);
                 options.ConnectRetry = 5;
                 options.AllowAdmin = true;
                 options.DefaultDatabase = 0;
@@ -41,14 +45,12 @@ namespace RedisCacheTutorial.Redis
                 _connection = ConnectionMultiplexer.Connect(options);
 
                 //Create a database backup every hour (3600 seconds)
-                _connection.GetServer("localhost:6379").ConfigSet("save", "3600 1");
+                _connection.GetServer(adress).ConfigSet("save", "3600 1");
             }
         }
 
         public IDatabase GetDatabase()
         {
-            var a = _connection.GetDatabase();
-
             return _connection.GetDatabase();
         }
 
