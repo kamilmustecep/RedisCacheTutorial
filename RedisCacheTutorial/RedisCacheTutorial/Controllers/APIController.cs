@@ -62,7 +62,7 @@ namespace RedisCacheTutorial.Controllers
             return Content(result);
         }
 
-        [HttpGet("deleteAllKey")]
+        [HttpDelete("deleteAllKey")]
         public IActionResult DeleteAllKey()
         {
             var result = _redisService.RemoveAllKeys();

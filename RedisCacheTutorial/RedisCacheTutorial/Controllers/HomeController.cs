@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using RedisCacheTutorial.Models;
 using RedisCacheTutorial.Redis;
+using StackExchange.Redis;
 using System.Diagnostics;
 
 namespace RedisCacheTutorial.Controllers
@@ -21,6 +23,10 @@ namespace RedisCacheTutorial.Controllers
 
         public IActionResult Index()
         {
+            var sessionId = HttpContext.Request.Cookies[".SampleApp.Session"];
+            string jsonData = _redisService.GetValue(sessionId);
+            UserModel user = JsonConvert.DeserializeObject<UserModel>(jsonData);
+
             return View();
         }
 
