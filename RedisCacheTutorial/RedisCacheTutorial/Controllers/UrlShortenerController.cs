@@ -6,8 +6,6 @@ using System.Web;
 
 namespace RedisCacheTutorial.Controllers
 {
-    //[ApiController]
-    //[Route("api")]
     public class UrlShortenerController : Controller
     {
         IRedisCacheService _redisService;

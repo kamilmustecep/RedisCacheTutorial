@@ -27,7 +27,7 @@ namespace RedisCacheTutorial.Controllers
             string jsonData = _redisService.GetValue(sessionId);
             UserModel user = JsonConvert.DeserializeObject<UserModel>(jsonData);
 
-            return View();
+            return View(user);
         }
 
     }

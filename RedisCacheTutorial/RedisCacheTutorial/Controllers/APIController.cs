@@ -39,7 +39,6 @@ namespace RedisCacheTutorial.Controllers
             return Content("1");
         }
 
-
         [HttpGet("getExTime")]
         public IActionResult GetExpireTime(string key)
         {
@@ -53,7 +52,6 @@ namespace RedisCacheTutorial.Controllers
             var value = _redisService.SetExpireTime(key, minute,isAdding);
             return Content(value.ToString());
         }
-
 
         [HttpGet("getAllKey")]
         public IActionResult GetAllKey()
@@ -69,7 +67,6 @@ namespace RedisCacheTutorial.Controllers
             return Content(result.ToString());
         }
 
-
         [HttpPost("setSortedWithScore")]
         public IActionResult SetSortedWithScore(string key,string value,double score)
         {
@@ -77,17 +74,11 @@ namespace RedisCacheTutorial.Controllers
             return Ok();
         }
 
-
         [HttpGet("getSortedWithScore")]
         public IActionResult SortedSetRangeByScore(string key)
         {
             return Content(_redisService.SortedSetRangeByScore(key));
         }
-
-
-
-
-
 
         [HttpGet("subscribe")]
         public async Task<IActionResult> Subscribe(string channelName)
@@ -107,7 +98,6 @@ namespace RedisCacheTutorial.Controllers
 
             return Ok(message);
         }
-
 
         [HttpPost("publish")]
         public IActionResult Publish(string channelName,string messageSend)
