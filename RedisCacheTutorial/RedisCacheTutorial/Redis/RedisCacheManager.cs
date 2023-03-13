@@ -193,6 +193,11 @@ namespace RedisCacheTutorial.Redis
             return GetDatabase().ListLeftPop(key);
         }
 
+        public List<RedisValue> GetList(string key)
+        {
+            return GetDatabase().ListRange(key).ToList();
+        }
+
 
         /* SortedSetAdd fonksiyonu, Redis Sorted Set veri yapısına bir anahtar-değer çifti ve puan ekler. 
          SortedSetRangeByScore fonksiyonu, verilerin puanına göre belirli bir aralıkta seçilmesini sağlar.*/

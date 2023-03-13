@@ -47,7 +47,7 @@ namespace RedisCacheTutorial.Redis
 
         public string ListLeftPop(string key);
 
-
+        public List<RedisValue> GetList(string key);
         public void SortedSetAdd(string key, string value, double score);
 
 
